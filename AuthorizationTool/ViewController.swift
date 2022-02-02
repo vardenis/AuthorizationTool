@@ -7,17 +7,34 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
     let userName = "Alexey"
     let passwordUser = "Efimov"
 
+    @IBOutlet var userNameTF: UITextField!
     @IBOutlet var passwordTF: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        passwordTF.text = ""
+       
+        userNameTF.delegate = self
+        userNameTF.returnKeyType = .next
+        
+        passwordTF.delegate = self
+        passwordTF.returnKeyType = .done
+        
+        addTapGestureToHideKeyboard()
     }
 
+    internal func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == userNameTF {
+            passwordTF.becomeFirstResponder()
+        } else if textField == passwordTF {
+            userNameTF.becomeFirstResponder()
+        }
+        return true
+    }
+    
     @IBAction func showUserName() {
         showAlert(title: "Reminder", massage: "Your name - \(userName)")
     }
@@ -25,6 +42,7 @@ class ViewController: UIViewController {
     @IBAction func showPassword() {
         showAlert(title: "Reminder", massage: "Your password - \(passwordUser)")
     }
+    
     
     
 }
@@ -40,4 +58,9 @@ extension ViewController {
         alert.addAction(okAction)
         present(alert, animated: true)
     }
+    
+   private func addTapGestureToHideKeyboard() {
+       let tapGesture = UITapGestureRecognizer(target: view, action: #selector(view.endEditing))
+       view.addGestureRecognizer(tapGesture)
+   }
 }
