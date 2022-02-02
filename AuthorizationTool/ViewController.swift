@@ -30,9 +30,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
         if textField == userNameTF {
             passwordTF.becomeFirstResponder()
         } else if textField == passwordTF {
-            userNameTF.becomeFirstResponder()
+            accessCheck()
+            performSegue(withIdentifier: "showWelcomeVC", sender: nil)
         }
         return true
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let welcomeVC = segue.destination as? WelcomeViewController else { return }
+        guard let userName = userNameTF.text, !userName.isEmpty else { return }
+        welcomeVC.welcomeValue = "Welcome, \(userName)"
     }
     
     @IBAction func showUserName() {
@@ -43,6 +50,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
         showAlert(title: "Reminder", massage: "Your password - \(passwordUser)")
     }
     
+    @IBAction func accessCheck() {
+        if userName != userNameTF.text || passwordUser != passwordTF.text {
+            showAlert(title: "Invalid login or password", massage: "Enter correct username or password")
+        }
+    }
+    
+    @IBAction func unwind(for segue: UIStoryboardSegue) {
+        userNameTF.text = ""
+        passwordTF.text = ""
+    }
     
     
 }
